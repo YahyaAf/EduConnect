@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use App\Repositories\CategoryRepository;
+use App\Services\CategoryService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +14,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(CategoryRepository::class, function ($app) {
+            return new CategoryRepository();
+        });
+    
+        $this->app->bind(CategoryService::class, function ($app) {
+            return new CategoryService($app->make(CategoryRepository::class));
+        });
     }
 
     /**
