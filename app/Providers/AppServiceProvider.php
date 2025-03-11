@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use App\Repositories\CategoryRepository;
 use App\Services\CategoryService;
+use App\Repositories\TagRepository;
+use App\Services\TagService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,15 @@ class AppServiceProvider extends ServiceProvider
     
         $this->app->bind(CategoryService::class, function ($app) {
             return new CategoryService($app->make(CategoryRepository::class));
+        });
+
+
+        $this->app->bind(TagRepository::class, function ($app) {
+            return new TagRepository();
+        });
+    
+        $this->app->bind(TagService::class, function ($app) {
+            return new TagService($app->make(TagRepository::class));
         });
     }
 
