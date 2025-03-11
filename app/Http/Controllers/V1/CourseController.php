@@ -16,6 +16,7 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -27,9 +28,10 @@ class CourseController extends Controller
             'tags' => 'array',
             'tags.*' => 'exists:tags,id',
         ]);
-
+        
         $course = Course::create($request->except('tags'));
-
+        dd($course);
+        
         if ($request->has('tags')) {
             $course->tags()->attach($request->tags);
         }
