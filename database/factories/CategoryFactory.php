@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,8 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name()
+            'name' => $this->faker->unique()->word(),
+            'parent_id' => rand(0, 1) ? Category::inRandomOrder()->first()?->id : null, 
         ];
     }
 }

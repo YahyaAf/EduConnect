@@ -6,12 +6,14 @@ use App\Models\Category;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
     public function index()
     {
-        return CategoryResource::collection(Category::all());
+        $categories = Category::with('subcategories')->whereNull('parent_id')->get();
+        return CategoryResource::collection($categories);
     }
 
     public function store(CategoryRequest $request)
@@ -22,7 +24,8 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-        return new CategoryResource(Category::findOrFail($id));
+        $category = Category::with('subcategories')->findOrFail($id);
+        return new CategoryResource($category);
     }
 
     public function update(CategoryRequest $request, $id)
@@ -32,9 +35,14 @@ class CategoryController extends Controller
         return new CategoryResource($category);
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $category = Category::findOrFail($id);
+
+        if ($category->subcategories()->exists()) {
+            return response()->json(['message' => 'Cannot delete a category with subcategories'], 400);
+        }
+
         $category->delete();
         return response()->json(['message' => 'Category deleted successfully'], 204);
     }
