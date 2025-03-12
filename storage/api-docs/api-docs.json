@@ -168,6 +168,335 @@
                 }
             }
         },
+        "/api/v1/courses": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Get a list of all courses",
+                "operationId": "6627e6b4d89dcf9b295f2c3fec4500ea",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Course Name"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "This is a description of the course."
+                                            },
+                                            "category": {
+                                                "type": "string",
+                                                "example": "Science"
+                                            },
+                                            "subcategory": {
+                                                "type": "string",
+                                                "example": "Physics"
+                                            },
+                                            "tags": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "example": "Tag 1"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Create a new course",
+                "operationId": "c92ef859bf9e97dd125704824ca1a573",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "New Course"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "This is a new course description"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "subcategory_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Course successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "New Course"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "This is a new course description"
+                                        },
+                                        "category": {
+                                            "type": "string",
+                                            "example": "Science"
+                                        },
+                                        "subcategory": {
+                                            "type": "string",
+                                            "example": "Physics"
+                                        },
+                                        "tags": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "Tag 1"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    }
+                }
+            }
+        },
+        "/api/v1/courses/{id}": {
+            "get": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Get a specific course by ID",
+                "operationId": "9e9cccf966319c7e515e8cd44f29b85f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the course",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Course Name"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Course Description"
+                                        },
+                                        "category": {
+                                            "type": "string",
+                                            "example": "Science"
+                                        },
+                                        "subcategory": {
+                                            "type": "string",
+                                            "example": "Physics"
+                                        },
+                                        "tags": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "Tag 1"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Course not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Update a specific course by ID",
+                "operationId": "76abe65a621f1380f5f46f55313da745",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Course Name"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated course description"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "subcategory_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the course",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Updated Course Name"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Updated course description"
+                                        },
+                                        "category": {
+                                            "type": "string",
+                                            "example": "Science"
+                                        },
+                                        "subcategory": {
+                                            "type": "string",
+                                            "example": "Physics"
+                                        },
+                                        "tags": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "Updated Tag"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Course not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Course"
+                ],
+                "summary": "Delete a specific course by ID",
+                "operationId": "6f04f40635e028f5d5c969a492cc48a4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successfully deleted the course"
+                    },
+                    "404": {
+                        "description": "Course not found"
+                    }
+                }
+            }
+        },
         "/api/v1/tags": {
             "get": {
                 "tags": [
@@ -324,6 +653,10 @@
         {
             "name": "Category",
             "description": "Category"
+        },
+        {
+            "name": "Course",
+            "description": "Course"
         },
         {
             "name": "Tag",
