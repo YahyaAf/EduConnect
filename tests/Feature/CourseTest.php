@@ -3,13 +3,11 @@
 use App\Models\Course;
 use App\Models\Category;
 use App\Models\Tag;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+// use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+// uses(RefreshDatabase::class);
 
 test('can retrieve all courses', function () {
-    Course::query()->delete();
-
     Course::factory()->count(3)->create();
 
     $response = $this->getJson('/api/v1/courses');
@@ -18,8 +16,6 @@ test('can retrieve all courses', function () {
 });
 
 test('can create a course with tags', function () {
-    Course::query()->delete();
-
     $category = Category::factory()->create();
     $tags = Tag::factory()->count(2)->create(); 
 
@@ -58,8 +54,6 @@ test('returns 404 for a non-existent course', function () {
 });
 
 test('can update a course with new tags', function () {
-    Course::query()->delete();
-
     $course = Course::factory()->create(['name' => 'Old Course']);
     $tags = Tag::factory()->count(3)->create(); 
 
@@ -89,3 +83,4 @@ test('can delete a course', function () {
     $response->assertNoContent();
     $this->assertDatabaseMissing('courses', ['id' => $course->id]);
 });
+
