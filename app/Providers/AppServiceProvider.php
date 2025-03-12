@@ -8,6 +8,8 @@ use App\Repositories\CategoryRepository;
 use App\Services\CategoryService;
 use App\Repositories\TagRepository;
 use App\Services\TagService;
+use App\Interfaces\CourseRepositoryInterface;
+use App\Repositories\CourseRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TagService::class, function ($app) {
             return new TagService($app->make(TagRepository::class));
         });
+
+        $this->app->bind(CourseRepositoryInterface::class, CourseRepository::class);
     }
 
     /**
