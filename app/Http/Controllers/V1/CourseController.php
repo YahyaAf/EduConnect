@@ -7,13 +7,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
+use App\Http\Resources\CourseResource;
 
 class CourseController extends Controller
 {
 
     public function index()
     {
-        return response()->json(Course::with('category', 'subcategory', 'tags')->get());
+        return CourseResource::collection(Course::with('category', 'subcategory', 'tags')->get());
     }
 
     public function store(CourseRequest $request)
@@ -25,7 +26,7 @@ class CourseController extends Controller
                 $course->tags()->attach($request->tags);
             }
 
-            return response()->json($course->load('tags'), 201);
+            return new CourseResource($course->load('tags'));
         } catch (\Exception $e) {
             \Log::error('Erreur lors de la création du cours: ' . $e->getMessage());
             return response()->json(['success' => false], 400);
@@ -34,7 +35,7 @@ class CourseController extends Controller
 
     public function show($id)
     {
-        return response()->json(Course::with('category', 'subcategory', 'tags')->findOrFail($id));
+        return new CourseResource(Course::with('category', 'subcategory', 'tags')->findOrFail($id));
     }
 
     public function update(UpdateCourseRequest $request, $id)
@@ -46,7 +47,7 @@ class CourseController extends Controller
             $course->tags()->sync($request->tags);
         }
 
-        return response()->json($course->load('tags'));
+        return new CourseResource($course->load('tags'));
     }
 
     public function destroy($id)
