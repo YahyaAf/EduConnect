@@ -11,6 +11,13 @@ use App\Services\TagService;
 use App\Interfaces\CourseRepositoryInterface;
 use App\Repositories\CourseRepository;
 
+/**
+ * @OA\Info(
+ * title="E-Learning",
+ * version="1.0.0"
+ * )
+*/
+
 class AppServiceProvider extends ServiceProvider
 {
     /**

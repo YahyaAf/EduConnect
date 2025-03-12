@@ -1,0 +1,71 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "E-Learning",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/categories": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get a list of categories",
+                "operationId": "3671e53482667a29af32f02cd140a21d",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Create a new category",
+                "operationId": "fde9f81e12953aab25071d8cebf98b70",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "New Category"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "This is a new category description"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Category created successfully"
+                    },
+                    "400": {
+                        "description": "Invalid request data"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Category",
+            "description": "Category"
+        }
+    ]
+}
