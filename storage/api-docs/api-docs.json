@@ -167,12 +167,167 @@
                     }
                 }
             }
+        },
+        "/api/v1/tags": {
+            "get": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Get a list of tags",
+                "operationId": "f386533d25fa83d190a7d00bac585a7d",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Create a new tag",
+                "operationId": "dc6adc250d4396655005a5fd1fefee98",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "The name of the tag",
+                                        "type": "string",
+                                        "example": "New Tag"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tag created successfully"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/api/v1/tags/{id}": {
+            "get": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Get a tag by ID",
+                "operationId": "34524b432c0e0abee73eb1605721f69a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the tag to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Tag not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Update an existing tag",
+                "operationId": "79557300cb629fdea8b4c8ce631504d5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the tag to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "The name of the tag",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Tag not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Delete an existing tag",
+                "operationId": "094cbc7c5691661fa2ead21dd7d6c481",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the tag to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Tag not found"
+                    }
+                }
+            }
         }
     },
     "tags": [
         {
             "name": "Category",
             "description": "Category"
+        },
+        {
+            "name": "Tag",
+            "description": "Tag"
         }
     ]
 }
