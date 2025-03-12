@@ -37,4 +37,10 @@ class TagService
     {
         return $this->tagRepository->delete($id);
     }
+
+    public function createMultipleTags(array $names)
+    {
+        return $this->tagRepository->createMultiple($names);
+    }
+
 }

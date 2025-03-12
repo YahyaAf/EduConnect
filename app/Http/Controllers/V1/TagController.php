@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Requests\TagRequest;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\TagResource;
+use App\Models\Tag;
 use App\Services\TagService;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use OpenAPI\Annotations as OA;
+use App\Http\Requests\TagRequest;
+use Illuminate\Http\JsonResponse;
+use App\Http\Resources\TagResource;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class TagController extends Controller
 {
@@ -161,4 +165,77 @@ class TagController extends Controller
     {
         return $this->tagService->deleteTag($id);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/v1/tags/multiple",
+     *     summary="Create multiple tags",
+     *     description="Create multiple tags by passing an array of names.",
+     *     tags={"Tags"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"names"},
+     *             @OA\Property(
+     *                 property="names",
+     *                 type="array",
+     *                 items=@OA\Items(type="string"),
+     *                 example={"Laravel", "PHP", "VueJS"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Tags created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Tags créés avec succès"),
+     *             @OA\Property(
+     *                 property="tags",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Laravel")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid input",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Erreur lors de la création des tags"),
+     *             @OA\Property(property="message", type="string", example="The names field is required.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Erreur lors de la création des tags"),
+     *             @OA\Property(property="message", type="string", example="An unexpected error occurred.")
+     *         )
+     *     )
+     * )
+     */
+    public function storeMultiple(Request $request)
+    {
+        try {
+            $request->validate([
+                'names' => 'required|array|min:1',
+                'names.*' => 'string|max:255',
+            ]);
+            $tags = $this->tagService->createMultipleTags($request->input('names'));
+            return response()->json([
+                'message' => 'Tags créés avec succès',
+                'tags' => $tags,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erreur lors de la création des tags',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }

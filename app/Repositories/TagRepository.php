@@ -34,4 +34,14 @@ class TagRepository
         $tag->delete();
         return response()->json(['message' => 'Tag deleted successfully'], 204);
     }
+
+    public function createMultiple(array $names)
+    {
+        $tags = [];
+        foreach ($names as $name) {
+            $tags[] = Tag::create(['name' => trim($name)]);
+        }
+        return $tags;
+    }
+
 }
