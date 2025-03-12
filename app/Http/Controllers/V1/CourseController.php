@@ -16,27 +16,34 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
-        
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'duration' => 'required|string',
-            'difficulty_level' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'subcategory_id' => 'nullable|exists:categories,id',
-            'status' => 'required|in:ouvert,en_cours,terminé',
-            'tags' => 'array',
-            'tags.*' => 'exists:tags,id',
-        ]);
-        
-        $course = Course::create($request->except('tags'));
-        dd($course);
-        
-        if ($request->has('tags')) {
-            $course->tags()->attach($request->tags);
-        }
+        try {
 
-        return response()->json($course->load('tags'), 201);
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'required|string',
+                'duration' => 'required|string',
+                'difficulty_level' => 'required|string',
+                'category_id' => 'required|exists:categories,id',
+                'subcategory_id' => 'nullable|exists:categories,id',
+                'status' => 'required',
+                'tags' => 'array',
+                'tags.*' => 'exists:tags,id',
+            ]);
+            
+            $course = Course::create($request->except('tags'));
+            
+            if ($request->has('tags')) {
+                $course->tags()->attach($request->tags);
+            }
+    
+            return response()->json($course->load('tags'), 201);
+        }
+        catch (\Exception $e) {
+            \Log::error('Errro creating course: ' . $e->getMessage());
+            return response()->json([
+                'success' =>  false
+            ], 404);
+        }
     }
 
     public function show($id)
