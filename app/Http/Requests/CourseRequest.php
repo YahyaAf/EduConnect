@@ -33,18 +33,4 @@ class CourseRequest extends FormRequest
             'tags.*' => 'exists:tags,id',
         ];
     }
-
-    public function messages(): array
-    {
-        return [
-            'name.required' => 'Le nom du cours est obligatoire.',
-            'description.required' => 'La description est obligatoire.',
-            'duration.required' => 'La durée est requise.',
-            'difficulty_level.required' => 'Le niveau de difficulté est requis.',
-            'category_id.required' => 'La catégorie est obligatoire.',
-            'category_id.exists' => 'La catégorie sélectionnée est invalide.',
-            'status.required' => 'Le statut du cours est obligatoire.',
-            'tags.*.exists' => 'Certains tags sélectionnés sont invalides.',
-        ];
-    }
 }
