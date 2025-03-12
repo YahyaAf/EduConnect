@@ -5,6 +5,8 @@ namespace App\Http\Controllers\V1;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CourseRequest;
+use App\Http\Requests\UpdateCourseRequest;
 
 class CourseController extends Controller
 {
@@ -14,35 +16,19 @@ class CourseController extends Controller
         return response()->json(Course::with('category', 'subcategory', 'tags')->get());
     }
 
-    public function store(Request $request)
+    public function store(CourseRequest $request)
     {
         try {
-
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'description' => 'required|string',
-                'duration' => 'required|string',
-                'difficulty_level' => 'required|string',
-                'category_id' => 'required|exists:categories,id',
-                'subcategory_id' => 'nullable|exists:categories,id',
-                'status' => 'required',
-                'tags' => 'array',
-                'tags.*' => 'exists:tags,id',
-            ]);
-            
             $course = Course::create($request->except('tags'));
-            
+
             if ($request->has('tags')) {
                 $course->tags()->attach($request->tags);
             }
-    
+
             return response()->json($course->load('tags'), 201);
-        }
-        catch (\Exception $e) {
-            \Log::error('Errro creating course: ' . $e->getMessage());
-            return response()->json([
-                'success' =>  false
-            ], 404);
+        } catch (\Exception $e) {
+            \Log::error('Erreur lors de la création du cours: ' . $e->getMessage());
+            return response()->json(['success' => false], 400);
         }
     }
 
@@ -51,22 +37,9 @@ class CourseController extends Controller
         return response()->json(Course::with('category', 'subcategory', 'tags')->findOrFail($id));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateCourseRequest $request, $id)
     {
         $course = Course::findOrFail($id);
-
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'duration' => 'sometimes|string',
-            'difficulty_level' => 'sometimes|string',
-            'category_id' => 'sometimes|exists:categories,id',
-            'subcategory_id' => 'nullable|exists:categories,id',
-            'status' => 'sometimes|in:ouvert,en_cours,terminé',
-            'tags' => 'array',
-            'tags.*' => 'exists:tags,id',
-        ]);
-
         $course->update($request->except('tags'));
 
         if ($request->has('tags')) {
