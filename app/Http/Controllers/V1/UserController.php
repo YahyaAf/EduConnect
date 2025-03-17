@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -31,21 +32,17 @@ class UserController extends Controller
         ], 201);
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $validatedData = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string'
-        ]);
-        
+        $validatedData = $request->validated();
+
         if (!Auth::attempt($validatedData)) {
             return response()->json([
                 'message' => 'Invalid email or password'
             ], 401);
         }
-        
-        $user = Auth::user();
 
+        $user = Auth::user();
         $token = $user->createToken('auth_Token')->plainTextToken;
 
         return response()->json([
@@ -54,6 +51,7 @@ class UserController extends Controller
             'token' => $token
         ], 200);
     }
+
 
 
 }

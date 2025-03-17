@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\V1\TagController;
 use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\CourseController;
@@ -36,6 +37,9 @@ Route::prefix('v1')->group(function () {
 });
 
 Route::prefix('v1')->group(function () {
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return $request->user();
+    });    
     Route::post('register', [UserController::class, 'register']);
     Route::post('login', [UserController::class, 'login']);
 });
