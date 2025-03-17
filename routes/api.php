@@ -36,6 +36,7 @@ Route::prefix('v1')->group(function () {
 });
 
 Route::prefix('v1')->group(function () {
-    Route::post('auth', [UserController::class, 'register']);
+    Route::post('register', [UserController::class, 'register']);
+    Route::post('login', [UserController::class, 'login']);
 });
 
