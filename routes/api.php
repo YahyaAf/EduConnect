@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\TagController;
-use App\Http\Controllers\V1\CategoryController;
+use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\CourseController;
+use App\Http\Controllers\V1\CategoryController;
 
 Route::prefix('v1')->group(function () {
 
@@ -32,5 +33,9 @@ Route::prefix('v1')->group(function () {
     Route::get('courses/{id}', [CourseController::class, 'show']);
     Route::put('courses/{id}', [CourseController::class, 'update']);
     Route::delete('courses/{id}', [CourseController::class, 'destroy']);
+});
+
+Route::prefix('v1')->group(function () {
+    Route::post('auth', [UserController::class, 'register']);
 });
 
