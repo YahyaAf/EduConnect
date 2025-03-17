@@ -44,6 +44,7 @@ Route::prefix('v1')->group(function () {
     Route::post('register', [UserController::class, 'register']);
     Route::post('login', [UserController::class, 'login']);
     Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+    Route::middleware('auth:sanctum')->post('/refresh-token', [UserController::class, 'refreshToken']);
     
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/profile', [ProfileController::class, 'show']);

@@ -59,6 +59,20 @@ class UserController extends Controller
         ]);
     }
 
+    public function refreshToken(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->user()->currentAccessToken()->delete();
+
+        $newToken = $user->createToken('auth_Token')->plainTextToken;
+        
+        return response()->json([
+            'message' => 'Token refreshed successfully',
+            'token' => $newToken
+        ]);
+    }
+
 
 
 }
