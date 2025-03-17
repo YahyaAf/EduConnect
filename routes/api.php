@@ -1,10 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\TagController;
 use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\CourseController;
+use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\CategoryController;
 
 Route::prefix('v1')->group(function () {
@@ -43,5 +44,10 @@ Route::prefix('v1')->group(function () {
     Route::post('register', [UserController::class, 'register']);
     Route::post('login', [UserController::class, 'login']);
     Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+    
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/profile', [ProfileController::class, 'show']);
+        Route::post('/profile/update', [ProfileController::class, 'update']);
+    });
 });
 
