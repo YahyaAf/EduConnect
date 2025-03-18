@@ -5,12 +5,14 @@ namespace App\Providers;
 use App\Services\TagService;
 use App\Services\CategoryService;
 use App\Repositories\TagRepository;
+use App\Services\EnrollmentService;
 use App\Services\PermissionService;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Route;
 use App\Repositories\CourseRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\CategoryRepository;
+use App\Repositories\EnrollmentRepository;
 use App\Repositories\PermissionRepository;
 use App\Interfaces\CourseRepositoryInterface;
 
@@ -57,6 +59,14 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(PermissionService::class, function ($app) {
             return new PermissionService($app->make(PermissionRepository::class));
+        });
+
+        $this->app->bind(EnrollmentRepository::class, function ($app) {
+            return new EnrollmentRepository();
+        });
+
+        $this->app->bind(EnrollmentService::class, function ($app) {
+            return new EnrollmentService($app->make(EnrollmentRepository::class));
         });
     }
 

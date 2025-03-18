@@ -2,28 +2,34 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Models\Enrollment;
-use App\Models\Course;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\EnrollmentService;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Course;
 
 class EnrollmentController extends Controller
 {
+    protected $enrollmentService;
+
+    public function __construct(EnrollmentService $enrollmentService)
+    {
+        $this->enrollmentService = $enrollmentService;
+    }
+
     /**
      * Un élève s'inscrit à un cours.
      */
     public function enroll(Request $request, $course_id)
     {
-        $existingEnrollment = Enrollment::where('user_id', Auth::id())
-            ->where('course_id', $course_id)
-            ->first();
+        $existingEnrollment = $this->enrollmentService->getEnrollmentsByCourse($course_id)->where('user_id', Auth::id())->first();
 
         if ($existingEnrollment) {
             return response()->json(['message' => 'Vous êtes déjà inscrit à ce cours'], 409);
         }
 
-        $enrollment = Enrollment::create([
+        // Création de l'inscription
+        $enrollment = $this->enrollmentService->enrollUser([
             'user_id' => Auth::id(),
             'course_id' => $course_id,
             'status' => 'pending',
@@ -41,7 +47,7 @@ class EnrollmentController extends Controller
     public function listEnrollments($course_id)
     {
         $course = Course::findOrFail($course_id);
-        $enrollments = $course->enrollments()->with('user')->get();
+        $enrollments = $this->enrollmentService->getEnrollmentsByCourse($course_id);
 
         return response()->json($enrollments);
     }
@@ -55,8 +61,7 @@ class EnrollmentController extends Controller
             'status' => 'required|in:pending,accepted,refused'
         ]);
 
-        $enrollment = Enrollment::findOrFail($id);
-        $enrollment->update(['status' => $request->status]);
+        $enrollment = $this->enrollmentService->updateEnrollmentStatus($id, $request->status);
 
         return response()->json([
             'message' => 'Statut mis à jour avec succès',
@@ -69,8 +74,7 @@ class EnrollmentController extends Controller
      */
     public function destroy($id)
     {
-        $enrollment = Enrollment::findOrFail($id);
-        $enrollment->delete();
+        $this->enrollmentService->deleteEnrollment($id);
 
         return response()->json(['message' => 'Inscription supprimée avec succès']);
     }
