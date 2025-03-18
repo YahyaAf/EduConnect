@@ -10,6 +10,7 @@ use App\Services\PermissionService;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Route;
 use App\Repositories\CourseRepository;
+use App\Repositories\ProfileRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\CategoryRepository;
 use App\Repositories\EnrollmentRepository;
@@ -68,6 +69,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EnrollmentService::class, function ($app) {
             return new EnrollmentService($app->make(EnrollmentRepository::class));
         });
+
+        $this->app->bind(ProfileRepository::class, ProfileRepository::class);
     }
 
     /**

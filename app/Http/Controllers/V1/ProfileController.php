@@ -5,19 +5,16 @@ namespace App\Http\Controllers\V1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\ProfileRequest;
-use Illuminate\Support\Facades\Storage;
-use App\Repositories\UserRepository;  // Import du Repository
+use App\Repositories\ProfileRepository;  
 
 class ProfileController extends Controller
 {
-    protected $userRepository;
+    protected $profileRepository;
 
-    // Injection du Repository
-    public function __construct(UserRepository $userRepository)
+    public function __construct(ProfileRepository $profileRepository)
     {
-        $this->userRepository = $userRepository;
+        $this->profileRepository = $profileRepository;
     }
 
     public function show()
@@ -32,10 +29,6 @@ class ProfileController extends Controller
         $user = Auth::user();
         $validatedData = $request->validated();
 
-        if (isset($validatedData['password'])) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
-        }
-
         if ($request->hasFile('photo')) {
             if ($user->photo) {
                 Storage::delete($user->photo);
@@ -45,7 +38,7 @@ class ProfileController extends Controller
             $validatedData['photo'] = $path;
         }
 
-        $user->update($validatedData);
+        $this->profileRepository->updateUser($user, $validatedData);
 
         return response()->json([
             'message' => 'Profile updated successfully',
@@ -56,8 +49,9 @@ class ProfileController extends Controller
     public function destroy()
     {
         $user = Auth::user();
-        $this->userRepository->deleteUser($user);
         
+        $this->profileRepository->deleteUser($user);
+
         Auth::logout();
 
         return response()->json([
