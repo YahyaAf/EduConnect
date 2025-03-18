@@ -2,14 +2,15 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Route;
-use App\Repositories\CategoryRepository;
+use App\Services\TagService;
 use App\Services\CategoryService;
 use App\Repositories\TagRepository;
-use App\Services\TagService;
-use App\Interfaces\CourseRepositoryInterface;
+use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Route;
 use App\Repositories\CourseRepository;
+use Illuminate\Support\ServiceProvider;
+use App\Repositories\CategoryRepository;
+use App\Interfaces\CourseRepositoryInterface;
 
 /**
  * @OA\Info(
@@ -43,6 +44,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(CourseRepositoryInterface::class, CourseRepository::class);
+
+        $this->app->bind(UserRepository::class, function ($app) {
+            return new UserRepository();
+        });
     }
 
     /**

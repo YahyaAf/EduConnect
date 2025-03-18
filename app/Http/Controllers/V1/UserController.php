@@ -2,29 +2,24 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;
 
 class UserController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function register(RegisterRequest $request)
     {
-        $photoPath = null;
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('photos', 'public');
-        }
-   
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'photo' => $photoPath, 
-        ]);
+        $user = $this->userService->register($request->all());
 
         return response()->json([
             'message' => 'User has registered successfully',
@@ -34,45 +29,35 @@ class UserController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $validatedData = $request->validated();
+        $result = $this->userService->login($request->validated());
 
-        if (!Auth::attempt($validatedData)) {
-            return response()->json([
-                'message' => 'Invalid email or password'
-            ], 401);
+        if (!$result) {
+            return response()->json(['message' => 'Invalid email or password'], 401);
         }
-
-        $user = Auth::user();
-        $token = $user->createToken('auth_Token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successfully',
-            'user' => $user,
-            'token' => $token
+            'user' => $result['user'],
+            'token' => $result['token']
         ], 200);
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         $request->user()->currentAccessToken()->delete();
-        return response()->json([
-            'message' => 'logout successfully'
-        ]);
+        return response()->json(['message' => 'Logout successfully']);
     }
 
     public function refreshToken(Request $request)
     {
         $user = Auth::user();
-
         $request->user()->currentAccessToken()->delete();
 
         $newToken = $user->createToken('auth_Token')->plainTextToken;
-        
+
         return response()->json([
             'message' => 'Token refreshed successfully',
             'token' => $newToken
         ]);
     }
-
-
-
 }
