@@ -7,6 +7,7 @@ use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\CategoryController;
+use App\Http\Controllers\V1\EnrollmentController;
 use App\Http\Controllers\V1\PermissionController;
 
 Route::prefix('v1')->group(function () {
@@ -52,6 +53,11 @@ Route::prefix('v1')->group(function () {
         Route::post('/profile/update', [ProfileController::class, 'update']);
         
         Route::apiResource('permissions', PermissionController::class);
+
+        Route::post('courses/{id}/enroll', [EnrollmentController::class, 'enroll']);
+        Route::get('courses/{id}/enrollments', [EnrollmentController::class, 'listEnrollments']);
+        Route::put('enrollments/{id}', [EnrollmentController::class, 'updateStatus']);
+        Route::delete('enrollments/{id}', [EnrollmentController::class, 'destroy']);
     });
 });
 
