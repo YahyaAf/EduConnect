@@ -7,6 +7,7 @@ use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\CategoryController;
+use App\Http\Controllers\V1\PermissionController;
 
 Route::prefix('v1')->group(function () {
 
@@ -49,6 +50,8 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/profile', [ProfileController::class, 'show']);
         Route::post('/profile/update', [ProfileController::class, 'update']);
+        
+        Route::apiResource('permissions', PermissionController::class);
     });
 });
 
