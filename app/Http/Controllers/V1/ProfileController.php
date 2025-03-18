@@ -8,9 +8,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\ProfileRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Repositories\UserRepository;  // Import du Repository
 
 class ProfileController extends Controller
 {
+    protected $userRepository;
+
+    // Injection du Repository
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     public function show()
     {
         return response()->json([
@@ -41,6 +50,18 @@ class ProfileController extends Controller
         return response()->json([
             'message' => 'Profile updated successfully',
             'user' => $user
+        ]);
+    }
+
+    public function destroy()
+    {
+        $user = Auth::user();
+        $this->userRepository->deleteUser($user);
+        
+        Auth::logout();
+
+        return response()->json([
+            'message' => 'User deleted successfully'
         ]);
     }
 }

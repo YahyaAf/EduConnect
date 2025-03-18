@@ -51,6 +51,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/profile', [ProfileController::class, 'show']);
         Route::post('/profile/update', [ProfileController::class, 'update']);
+        Route::delete('/profile', [ProfileController::class, 'destroy']);
         
         Route::apiResource('permissions', PermissionController::class);
 
