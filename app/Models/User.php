@@ -26,7 +26,7 @@ class User extends Authenticatable
         'photo'
     ];
 
-    protected $guard_name = ['web', 'api', 'sanctum'];
+    protected $guard_name = 'sanctum'; 
 
     /**
      * The attributes that should be hidden for serialization.

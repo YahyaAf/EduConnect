@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserService
 {
@@ -20,11 +21,16 @@ class UserService
         if (isset($data['photo'])) {
             $data['photo'] = $data['photo']->store('photos', 'public');
         }
-
+    
         $data['password'] = Hash::make($data['password']);
-
-        return $this->userRepository->create($data);
+    
+        $user = $this->userRepository->create($data);
+    
+        $user->assignRole('student');
+    
+        return $user;
     }
+    
 
     public function login(array $credentials)
     {
