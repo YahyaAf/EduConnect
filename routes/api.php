@@ -10,6 +10,7 @@ use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\EnrollmentController;
 use App\Http\Controllers\V1\PermissionController;
+use App\Http\Controllers\V1\StatisticsController;
 
 
 Route::prefix('v1')->group(function () {
@@ -55,6 +56,12 @@ Route::prefix('v1')->group(function () {
         Route::get('courses/{id}', [CourseController::class, 'show']);
         Route::put('courses/{id}', [CourseController::class, 'update']);
         Route::delete('courses/{id}', [CourseController::class, 'destroy']);
+
+        Route::prefix('stats')->group(function () {
+            Route::get('/courses', [StatisticsController::class, 'getCoursesStats']);
+            Route::get('/categories', [StatisticsController::class, 'getCategoriesStats']);
+            Route::get('/tags', [StatisticsController::class, 'getTagsStats']);
+        });
     });
 });
 
