@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\TagService;
+use App\Services\MentorService;
 use App\Services\StudentService;
 use App\Services\CategoryService;
 use App\Repositories\TagRepository;
@@ -12,6 +13,7 @@ use App\Services\StatisticsService;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Route;
 use App\Repositories\CourseRepository;
+use App\Repositories\MentorRepository;
 use App\Repositories\ProfileRepository;
 use App\Repositories\StudentRepository;
 use Illuminate\Support\ServiceProvider;
@@ -87,6 +89,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(StudentRepository::class, StudentRepository::class);
         
         $this->app->bind(StudentService::class, StudentService::class);
+
+        $this->app->bind(MentorRepository::class, function ($app) {
+            return new MentorRepository();
+        });
+    
+        $this->app->bind(MentorService::class, function ($app) {
+            return new MentorService($app->make(MentorRepository::class));
+        });
     }
 
     /**
