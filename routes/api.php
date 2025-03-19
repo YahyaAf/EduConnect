@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\TagController;
 use App\Http\Controllers\V1\RoleController;
 use App\Http\Controllers\V1\UserController;
+use App\Http\Controllers\V1\VideoController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\MentorController;
 use App\Http\Controllers\V1\ProfileController;
@@ -76,6 +77,12 @@ Route::prefix('v1')->group(function () {
             Route::get('/performance-stats', [MentorController::class, 'getPerformanceStats']);
 
         });
+
+        Route::post('courses/{id}/videos', [VideoController::class, 'store']);  
+        Route::get('courses/{id}/videos', [VideoController::class, 'index']);   
+        Route::get('videos/{id}', [VideoController::class, 'show']);          
+        Route::put('videos/{id}', [VideoController::class, 'update']);        
+        Route::delete('videos/{id}', [VideoController::class, 'destroy']);
 
         
     });
