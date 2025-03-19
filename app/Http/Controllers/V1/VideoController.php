@@ -2,23 +2,18 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
 use App\Models\Video;
 use App\Models\Course;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Requests\VideoRequest;
+use App\Http\Controllers\Controller;
 
 class VideoController extends Controller
 {
-    public function store(Request $request, $courseId): JsonResponse
+    public function store(VideoRequest $request, $courseId): JsonResponse
     {
         try {
-            $request->validate([
-                'title'       => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'video_path'       => 'required|file|mimes:mp4,avi,mkv|max:10240', 
-            ]);
-
             $course = Course::findOrFail($courseId);
 
             if (!$request->hasFile('video_path')) {
@@ -40,9 +35,6 @@ class VideoController extends Controller
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['error' => 'Le cours spécifié est introuvable'], 404);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['error' => 'Validation échouée', 'details' => $e->errors()], 422);
 
         } catch (\Exception $e) {
             return response()->json(['error' => 'Une erreur est survenue', 'details' => $e->getMessage()], 500);
