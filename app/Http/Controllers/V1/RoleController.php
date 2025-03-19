@@ -4,37 +4,31 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use App\Services\RoleService;  
 use Illuminate\Http\JsonResponse;
 
 class RoleController extends Controller
 {
-    
-    /**
-     * Display a listing of roles.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    protected $roleService;
+
+    public function __construct(RoleService $roleService)
+    {
+        $this->roleService = $roleService;
+    }
+
     public function index(): JsonResponse
     {
-        $roles = Role::all();
+        $roles = $this->roleService->getRoles();
         return response()->json($roles);
     }
 
-    /**
-     * Store a newly created role in the database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(Request $request): JsonResponse
     {
         $request->validate([
             'name' => 'required|string|unique:roles,name',
         ]);
 
-        $role = Role::create([
+        $role = $this->roleService->createRole([
             'name' => $request->name,
         ]);
 
@@ -44,33 +38,19 @@ class RoleController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified role.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show($id): JsonResponse
     {
-        $role = Role::with('permissions')->findOrFail($id);
+        $role = $this->roleService->getRoles($id);
         return response()->json($role);
     }
 
-    /**
-     * Update the specified role in the database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update(Request $request, $id): JsonResponse
     {
         $request->validate([
             'name' => 'required|string|unique:roles,name,' . $id,
         ]);
 
-        $role = Role::findOrFail($id);
-        $role->update([
+        $role = $this->roleService->updateRole($id, [
             'name' => $request->name,
         ]);
 
@@ -80,29 +60,15 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified role from the database.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy($id): JsonResponse
     {
-        $role = Role::where('id',$id);
-        $role->delete();
+        $this->roleService->deleteRole($id);
 
         return response()->json([
             'message' => 'Role deleted successfully',
         ]);
     }
 
-    /**
-     * Assign permissions to a role.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $roleId
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function assignPermissions(Request $request, $roleId): JsonResponse
     {
         $request->validate([
@@ -110,24 +76,13 @@ class RoleController extends Controller
             'permissions.*' => 'exists:permissions,id',
         ]);
 
-        $role = Role::findOrFail($roleId);
-        $permissions = Permission::whereIn('id', $request->permissions)->get();
-
-        $role->givePermissionTo($permissions);
+        $this->roleService->assignPermissionsToRole($roleId, $request->permissions);
 
         return response()->json([
             'message' => 'Permissions assigned successfully to the role.',
-            'role' => $role
         ]);
     }
 
-    /**
-     * Revoke permissions from a role.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $roleId
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function revokePermissions(Request $request, $roleId): JsonResponse
     {
         $request->validate([
@@ -135,14 +90,10 @@ class RoleController extends Controller
             'permissions.*' => 'exists:permissions,id',
         ]);
 
-        $role = Role::findOrFail($roleId);
-        $permissions = Permission::whereIn('id', $request->permissions)->get();
-
-        $role->revokePermissionTo($permissions);
+        $this->roleService->revokePermissionsFromRole($roleId, $request->permissions);
 
         return response()->json([
             'message' => 'Permissions revoked successfully from the role.',
-            'role' => $role
         ]);
     }
 }
