@@ -10,14 +10,20 @@ use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
 use App\Services\CourseService;
 use OpenAPI\Annotations as OA;
+use Illuminate\Routing\Controller as BaseController;
 
-class CourseController extends Controller
+class CourseController extends BaseController
 {
     protected $courseService;
 
     public function __construct(CourseService $courseService)
     {
         $this->courseService = $courseService;
+
+        $this->middleware('can:view-course')->only(['index', 'show']);
+        $this->middleware('can:create-course')->only(['store']);
+        $this->middleware('can:update-course')->only(['update']);
+        $this->middleware('can:delete-course')->only(['destroy']);
     }
 
     /**
