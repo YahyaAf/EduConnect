@@ -65,14 +65,9 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::prefix('students')->group(function () {
-            // Lister les cours auxquels un élève est inscrit
             Route::get('/courses', [StudentController::class, 'getCourses']);
+            Route::get('/progress', [StudentController::class, 'getProgress']);
         
-            // // Suivre la progression de l'élève dans ses cours
-            // Route::get('students/{id}/progress', [StudentController::class, 'getProgress']);
-        
-            // // Lister les badges obtenus par un élève
-            // Route::get('students/{id}/badges', [StudentController::class, 'getBadges']);
         });
     });
 });

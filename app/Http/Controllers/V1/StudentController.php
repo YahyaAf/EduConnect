@@ -18,10 +18,9 @@ class StudentController extends Controller
         ]);
     }
 
-
-    public function getProgress($id): JsonResponse
+    public function getProgress(): JsonResponse
     {
-        $student = User::findOrFail($id);
+        $student = auth()->user();
 
         $progress = $student->courses->map(function ($course) {
             return [
@@ -29,7 +28,6 @@ class StudentController extends Controller
                 'progress' => $course->pivot->progress, 
             ];
         });
-
         return response()->json([
             'progress' => $progress,
         ]);
