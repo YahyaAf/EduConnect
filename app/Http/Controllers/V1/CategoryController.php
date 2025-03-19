@@ -8,14 +8,20 @@ use App\Http\Resources\CategoryResource;
 use App\Services\CategoryService;
 use Illuminate\Http\JsonResponse;
 use OpenAPI\Annotations as OA;
+use Illuminate\Routing\Controller as BaseController;
 
-class CategoryController extends Controller
+class CategoryController extends BaseController
 {
     protected $categoryService;
 
     public function __construct(CategoryService $categoryService)
     {
         $this->categoryService = $categoryService;
+
+        $this->middleware('permission:view-category')->only('index', 'show');
+        $this->middleware('permission:create-category')->only('store');
+        $this->middleware('permission:update-category')->only('update');
+        $this->middleware('permission:delete-category')->only('destroy');
     }
     /**
      * @OA\Get(
