@@ -7,14 +7,20 @@ use App\Http\Controllers\Controller;
 use App\Services\EnrollmentService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
+use Illuminate\Routing\Controller as BaseController;
 
-class EnrollmentController extends Controller
+class EnrollmentController extends BaseController
 {
     protected $enrollmentService;
 
     public function __construct(EnrollmentService $enrollmentService)
     {
         $this->enrollmentService = $enrollmentService;
+
+        $this->middleware('can:enroll')->only(['enroll']);
+        $this->middleware('can:listEnrollments')->only(['listEnrollments']);
+        $this->middleware('can:updateStatus')->only(['updateStatus']);
+        $this->middleware('can:delete-enroll')->only(['destroy']);
     }
 
     /**
