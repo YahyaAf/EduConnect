@@ -40,6 +40,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('roles', RoleController::class);
         Route::post('roles/{roleId}/permissions', [RoleController::class, 'assignPermissions']);
         Route::post('roles/{roleId}/revoke-permissions', [RoleController::class, 'revokePermissions']);
+        Route::post('/roles/{userId}/assign', [RoleController::class, 'assignRoleToUser']);
+
 
         Route::get('categories', [CategoryController::class, 'index']);
         Route::post('categories', [CategoryController::class, 'store']);

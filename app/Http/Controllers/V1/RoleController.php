@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\RoleService;  
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
 
 class RoleController extends Controller
 {
@@ -96,4 +97,20 @@ class RoleController extends Controller
             'message' => 'Permissions revoked successfully from the role.',
         ]);
     }
+
+    public function assignRoleToUser(Request $request, $userId): JsonResponse
+    {
+        $request->validate([
+            'role' => 'required|string|exists:roles,name', 
+        ]);
+
+        $user = User::findOrFail($userId); 
+
+        $user->assignRole($request->role);
+
+        return response()->json([
+            'message' => 'Role assigned successfully to the user.',
+        ]);
+    }
+
 }
