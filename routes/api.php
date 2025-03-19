@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\TagController;
+use App\Http\Controllers\V1\RoleController;
 use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\ProfileController;
@@ -59,6 +60,10 @@ Route::prefix('v1')->group(function () {
         Route::get('courses/{id}/enrollments', [EnrollmentController::class, 'listEnrollments']);
         Route::put('enrollments/{id}', [EnrollmentController::class, 'updateStatus']);
         Route::delete('enrollments/{id}', [EnrollmentController::class, 'destroy']);
+
+        Route::apiResource('roles', RoleController::class);
+        Route::post('roles/{roleId}/permissions', [RoleController::class, 'assignPermissions']);
+        Route::post('roles/{roleId}/revoke-permissions', [RoleController::class, 'revokePermissions']);
     });
 });
 
