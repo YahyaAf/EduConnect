@@ -2,32 +2,29 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Models\Video;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\VideoRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\VideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
+use App\Services\VideoService;
 
 class VideoController extends Controller
 {
+    protected $videoService;
+
+    public function __construct(VideoService $videoService)
+    {
+        $this->videoService = $videoService;
+    }
+
     public function store(VideoRequest $request, $courseId): JsonResponse
     {
         try {
             $course = Course::findOrFail($courseId);
 
-            if (!$request->hasFile('video_path')) {
-                return response()->json(['error' => 'Aucun fichier vidéo trouvé'], 400);
-            }
-
-            $videoPath = $request->file('video_path')->store('videos', 'public');
-
-            $video = $course->videos()->create([
-                'title'       => $request->title,
-                'description' => $request->description,
-                'video_path'  => $videoPath,
-            ]);
+            $video = $this->videoService->storeVideo($course, $request);
 
             return response()->json([
                 'message' => 'Vidéo ajoutée avec succès', 
@@ -44,36 +41,34 @@ class VideoController extends Controller
 
     public function index($courseId): JsonResponse
     {
-        $course = Course::findOrFail($courseId);
-        $videos = $course->videos;
+        try {
+            $course = Course::findOrFail($courseId);
 
-        return response()->json(['videos' => $videos]);
+            $videos = $this->videoService->getVideos($course);
+
+            return response()->json(['videos' => $videos]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Une erreur est survenue', 'details' => $e->getMessage()], 500);
+        }
     }
 
     public function show($id): JsonResponse
     {
-        $video = Video::findOrFail($id);
-        return response()->json(['video' => $video]);
+        try {
+            $video = $this->videoService->getVideoById($id);
+
+            return response()->json(['video' => $video]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Vidéo introuvable'], 404);
+        }
     }
 
     public function update(UpdateVideoRequest $request, $id): JsonResponse
     {
         try {
-            $video = Video::findOrFail($id);
-
-            if ($request->hasFile('video_path')) {
-                \Storage::disk('public')->delete($video->video_path);
-
-                $videoPath = $request->file('video_path')->store('videos', 'public');
-                $video->video_path = $videoPath;
-            }
-
-            $video->update($request->only(['title', 'description']));
+            $video = $this->videoService->updateVideo($id, $request);
 
             return response()->json(['message' => 'Vidéo mise à jour avec succès', 'video' => $video]);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['error' => 'Vidéo introuvable'], 404);
 
         } catch (\Exception $e) {
             return response()->json(['error' => 'Une erreur est survenue', 'details' => $e->getMessage()], 500);
@@ -82,12 +77,12 @@ class VideoController extends Controller
 
     public function destroy($id): JsonResponse
     {
-        $video = Video::findOrFail($id);
-        
-        \Storage::disk('public')->delete($video->video_path);
+        try {
+            $this->videoService->deleteVideo($id);
 
-        $video->delete();
-
-        return response()->json(['message' => 'Vidéo supprimée avec succès']);
+            return response()->json(['message' => 'Vidéo supprimée avec succès']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Une erreur est survenue', 'details' => $e->getMessage()], 500);
+        }
     }
 }

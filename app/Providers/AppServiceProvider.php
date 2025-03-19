@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\TagService;
+use App\Services\VideoService;
 use App\Services\MentorService;
 use App\Services\StudentService;
 use App\Services\CategoryService;
@@ -11,6 +12,7 @@ use App\Services\EnrollmentService;
 use App\Services\PermissionService;
 use App\Services\StatisticsService;
 use App\Repositories\UserRepository;
+use App\Repositories\VideoRepository;
 use Illuminate\Support\Facades\Route;
 use App\Repositories\CourseRepository;
 use App\Repositories\MentorRepository;
@@ -97,6 +99,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MentorService::class, function ($app) {
             return new MentorService($app->make(MentorRepository::class));
         });
+
+        $this->app->bind(VideoRepository::class, VideoRepository::class);
+        $this->app->bind(VideoService::class, VideoService::class);
     }
 
     /**
