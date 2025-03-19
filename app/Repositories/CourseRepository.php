@@ -19,9 +19,12 @@ class CourseRepository implements CourseRepositoryInterface
 
     public function create(array $data)
     {
+        $data['user_id'] = auth()->id();
+
         $course = Course::create(collect($data)->except('tags')->toArray());
 
-        if (isset($data['tags'])) {
+        // Attacher les tags si fournis
+        if (!empty($data['tags'])) {
             $course->tags()->attach($data['tags']);
         }
 
