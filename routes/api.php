@@ -6,6 +6,7 @@ use App\Http\Controllers\V1\TagController;
 use App\Http\Controllers\V1\RoleController;
 use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\CourseController;
+use App\Http\Controllers\V1\MentorController;
 use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\StudentController;
 use App\Http\Controllers\V1\CategoryController;
@@ -69,6 +70,14 @@ Route::prefix('v1')->group(function () {
             Route::get('/progress', [StudentController::class, 'getProgress']);
         
         });
+        Route::prefix('mentor')->group(function () {
+            Route::get('/courses', [MentorController::class, 'getCreatedCourses']);
+            Route::get('/enrolled-students', [MentorController::class, 'getEnrolledStudentsCount']);
+            Route::get('/performance-stats', [MentorController::class, 'getPerformanceStats']);
+
+        });
+
+        
     });
 });
 
