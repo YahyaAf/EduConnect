@@ -81,7 +81,7 @@ Route::prefix('v1')->group(function () {
         Route::post('courses/{id}/videos', [VideoController::class, 'store']);  
         Route::get('courses/{id}/videos', [VideoController::class, 'index']);   
         Route::get('videos/{id}', [VideoController::class, 'show']);          
-        Route::put('videos/{id}', [VideoController::class, 'update']);        
+        Route::post('videos/{id}', [VideoController::class, 'update']);        
         Route::delete('videos/{id}', [VideoController::class, 'destroy']);
 
         

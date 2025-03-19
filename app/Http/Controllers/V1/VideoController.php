@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\VideoRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateVideoRequest;
 
 class VideoController extends Controller
 {
@@ -55,26 +56,28 @@ class VideoController extends Controller
         return response()->json(['video' => $video]);
     }
 
-    public function update(Request $request, $id): JsonResponse
+    public function update(UpdateVideoRequest $request, $id): JsonResponse
     {
-        $video = Video::findOrFail($id);
+        try {
+            $video = Video::findOrFail($id);
 
-        $request->validate([
-            'title'       => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'video'       => 'sometimes|file|mimes:mp4,avi,mkv|max:10240',
-        ]);
+            if ($request->hasFile('video_path')) {
+                \Storage::disk('public')->delete($video->video_path);
 
-        if ($request->hasFile('video')) {
-            \Storage::disk('public')->delete($video->video_path);
+                $videoPath = $request->file('video_path')->store('videos', 'public');
+                $video->video_path = $videoPath;
+            }
 
-            $videoPath = $request->file('video')->store('videos', 'public');
-            $video->video_path = $videoPath;
+            $video->update($request->only(['title', 'description']));
+
+            return response()->json(['message' => 'Vidéo mise à jour avec succès', 'video' => $video]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Vidéo introuvable'], 404);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Une erreur est survenue', 'details' => $e->getMessage()], 500);
         }
-
-        $video->update($request->only(['title', 'description']));
-
-        return response()->json(['message' => 'Vidéo mise à jour avec succès', 'video' => $video]);
     }
 
     public function destroy($id): JsonResponse
