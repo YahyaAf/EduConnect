@@ -3,14 +3,22 @@
 namespace App\Http\Controllers\V1;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Permission;
+use App\Services\PermissionService; 
 
 class PermissionController extends Controller
 {
+    protected $permissionService;
+
+    public function __construct(PermissionService $permissionService)
+    {
+        $this->permissionService = $permissionService;
+    }
+
     public function index()
     {
-        $permissions = Permission::all();
+        $permissions = $this->permissionService->getPermissions();
         return response()->json($permissions);
     }
 
@@ -20,10 +28,10 @@ class PermissionController extends Controller
             'name' => 'required|string|unique:permissions,name',
         ]);
 
-        $permission = Permission::create([
+        $permission = $this->permissionService->createPermission([
             'name' => $request->name,
-            'guard_name' => 'web', 
-        ]);
+            // 'guard_name' => 'api', 
+        ]); 
 
         return response()->json([
             'message' => 'Permission created successfully',
@@ -31,24 +39,22 @@ class PermissionController extends Controller
         ], 201);
     }
 
-
     public function show($id)
     {
-        $permission = Permission::findOrFail($id);
+        $permission = $this->permissionService->getPermission($id);
         return response()->json($permission);
     }
-
 
     public function update(Request $request, $id)
     {
         try {
-            $permission = Permission::findOrFail($id);
-
             $request->validate([
                 'name' => 'required|string|unique:permissions,name,' . $id
             ]);
 
-            $permission->update(['name' => $request->name]);
+            $permission = $this->permissionService->updatePermission($id, [
+                'name' => $request->name
+            ]);
 
             return response()->json([
                 'message' => 'Permission updated successfully',
@@ -63,17 +69,10 @@ class PermissionController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        $permission = Permission::findOrFail($id);
-        $permission->delete();
+        $test = $this->permissionService->deletePermission($id);
 
-        return response()->json([
-            'message' => 'Permission deleted successfully',
-        ]);
-    }
-
-
-
-
+        return response()->json(['success' => $test['success'], 'message' => $test['message'],], $test['success'] ? 200 : 404);
+    } 
 }

@@ -2,7 +2,8 @@
 
 namespace App\Repositories;
 
-use Spatie\Permission\Models\Permission;
+
+use Spatie\Permission\Models\Permission; 
 
 class PermissionRepository
 {
@@ -30,7 +31,14 @@ class PermissionRepository
 
     public function deletePermission($id)
     {
-        $permission = Permission::findOrFail($id);
+        $permission = Permission::where('id',$id); 
+        // dd($permission);
+        
+        if(!$permission) {
+        return [ 'success' => false, 'message' => 'Permission not found'];
+        }
         $permission->delete();
+
+        return [ 'success' => true, 'message' => 'Deleted!'];
     }
 }
