@@ -7,6 +7,7 @@ use App\Http\Controllers\V1\RoleController;
 use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\ProfileController;
+use App\Http\Controllers\V1\StudentController;
 use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\EnrollmentController;
 use App\Http\Controllers\V1\PermissionController;
@@ -61,6 +62,17 @@ Route::prefix('v1')->group(function () {
             Route::get('/courses', [StatisticsController::class, 'getCoursesStats']);
             Route::get('/categories', [StatisticsController::class, 'getCategoriesStats']);
             Route::get('/tags', [StatisticsController::class, 'getTagsStats']);
+        });
+
+        Route::prefix('students')->group(function () {
+            // Lister les cours auxquels un élève est inscrit
+            Route::get('/courses', [StudentController::class, 'getCourses']);
+        
+            // // Suivre la progression de l'élève dans ses cours
+            // Route::get('students/{id}/progress', [StudentController::class, 'getProgress']);
+        
+            // // Lister les badges obtenus par un élève
+            // Route::get('students/{id}/badges', [StudentController::class, 'getBadges']);
         });
     });
 });
