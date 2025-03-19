@@ -5,14 +5,19 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Services\MentorService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller as BaseController;
 
-class MentorController extends Controller
+class MentorController extends BaseController
 {
     protected $mentorService;
 
     public function __construct(MentorService $mentorService)
     {
         $this->mentorService = $mentorService;
+
+        $this->middleware('can:getCreatedCourses')->only(['getCreatedCourses']);
+        $this->middleware('can:getEnrolledStudentsCount')->only(['getEnrolledStudentsCount']);
+        $this->middleware('can:getPerformanceStats')->only(['getPerformanceStats']);
     }
 
     public function getCreatedCourses(): JsonResponse
