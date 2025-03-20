@@ -7,14 +7,23 @@ use Illuminate\Http\Request;
 use App\Services\RoleService;  
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller as BaseController;
 
-class RoleController extends Controller
+class RoleController extends BaseController
 {
     protected $roleService;
 
     public function __construct(RoleService $roleService)
     {
         $this->roleService = $roleService;
+
+        $this->middleware('can:create-role')->only(['store']);
+        $this->middleware('can:view-role')->only(['index', 'show']);
+        $this->middleware('can:update-role')->only(['update']);
+        $this->middleware('can:delete-role')->only(['destroy']);
+        $this->middleware('can:assignPermissions')->only(['assignPermissions']);
+        $this->middleware('can:revokePermissions')->only(['revokePermissions']);
+        $this->middleware('can:assignRoleToUser')->only(['assignRoleToUser']);
     }
 
     public function index(): JsonResponse
