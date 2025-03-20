@@ -5,14 +5,18 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Services\StudentService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller as BaseController;
 
-class StudentController extends Controller
+class StudentController extends BaseController
 {
     protected $studentService;
 
     public function __construct(StudentService $studentService)
     {
         $this->studentService = $studentService;
+
+        $this->middleware('can:getCoursesStudent')->only(['getCourses']);
+        $this->middleware('can:getProgress')->only(['getProgress']);
     }
 
     public function getCourses(): JsonResponse
