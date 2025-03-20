@@ -5,15 +5,21 @@ namespace App\Http\Controllers\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Services\PermissionService; 
+use App\Services\PermissionService;
+use Illuminate\Routing\Controller as BaseController;
 
-class PermissionController extends Controller
+class PermissionController extends BaseController
 {
     protected $permissionService;
 
     public function __construct(PermissionService $permissionService)
     {
         $this->permissionService = $permissionService;
+
+        $this->middleware('can:create-permission')->only(['store']);
+        $this->middleware('can:edit-permission')->only(['update']);
+        $this->middleware('can:delete-permission')->only(['destroy']);
+        $this->middleware('can:view-permission')->only(['index', 'show']);
     }
 
     public function index()
