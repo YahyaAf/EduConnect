@@ -12,14 +12,20 @@ use App\Http\Resources\TagResource;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Routing\Controller as BaseController;
 
-class TagController extends Controller
+class TagController extends BaseController
 {
     protected $tagService;
 
     public function __construct(TagService $tagService)
     {
         $this->tagService = $tagService;
+
+        $this->middleware('can:view-tag')->only(['index', 'show']);
+        $this->middleware('can:create-tag')->only(['store', 'storeMultiple']);
+        $this->middleware('can:update-tag')->only(['update']);
+        $this->middleware('can:delete-tag')->only(['destroy']);
     }
 
     /**
