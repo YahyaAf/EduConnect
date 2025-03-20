@@ -9,14 +9,20 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\VideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
 use App\Services\VideoService;
+use Illuminate\Routing\Controller as BaseController;
 
-class VideoController extends Controller
+class VideoController extends BaseController
 {
     protected $videoService;
 
     public function __construct(VideoService $videoService)
     {
         $this->videoService = $videoService;
+
+        $this->middleware('can:view-video')->only(['index', 'show']);
+        $this->middleware('can:create-video')->only(['store']);
+        $this->middleware('can:update-video')->only(['update']);
+        $this->middleware('can:delete-video')->only(['destroy']);
     }
 
     public function store(VideoRequest $request, $courseId): JsonResponse
