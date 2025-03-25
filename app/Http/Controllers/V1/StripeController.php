@@ -21,7 +21,7 @@ class StripeController extends Controller
     }
 
     public function checkout($course_id){
-        Stripe::setApiKey("sk_test_51R6J1oDxXx2LU8Btr97rj2Bf7p1UXywJvw9KXy8fojveXnckd1zTxXLfdjvaoc7A8cfMXcpGMoEqlm5oM7ThBhHK00zpjHn5Jg");
+        Stripe::setApiKey("sk_test_51R6UCjIo0Xgztj39OZysEUjIf2bwvKATBXjALqt8LX7NiVU9tTxzjTzg3wsb3voppYKsW1hNNyCkxWVtlXBoQsbc001lxLtUD2");
         $course = Course::findOrFail($course_id);
         $session = Session::create([
             'line_items'  => [
