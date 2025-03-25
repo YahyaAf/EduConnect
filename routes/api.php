@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\TagController;
 use App\Http\Controllers\V1\RoleController;
 use App\Http\Controllers\V1\UserController;
+use App\Http\Controllers\V1\BadgeController;
 use App\Http\Controllers\V1\VideoController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\MentorController;
@@ -92,6 +93,11 @@ Route::prefix('v1')->group(function () {
         Route::get("/payment/success/{course}",[StripeController::class,"success"])->name("payment.success");
         Route::get("/payment/history",[StripeController::class,"history"])->name("payment.history");
         Route::get('/payment/status/{id}', [StripeController::class, 'status']);
+
+        Route::get('badges', [BadgeController::class, 'index']);
+        Route::post('badges', [BadgeController::class, 'store']);
+        Route::put('badges/{id}', [BadgeController::class, 'update']);
+        Route::delete('badges/{id}', [BadgeController::class, 'destroy']);
 
                 
     });

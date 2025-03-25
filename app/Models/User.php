@@ -56,4 +56,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Course::class, 'enrollments', 'user_id', 'course_id')
                     ->withPivot('progress', 'created_at', 'updated_at'); 
     }
+
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges');
+    }
+
 }
