@@ -88,13 +88,9 @@ Route::prefix('v1')->group(function () {
         Route::post('videos/{id}', [VideoController::class, 'update']);        
         Route::delete('videos/{id}', [VideoController::class, 'destroy']);
 
-        // Route::get('/payment/create/{course_id}', [PayPalController::class, 'createPayment'])->name('payment.create');
-        // Route::get('/payment/success/{course_id}', [PayPalController::class, 'paymentSuccess'])->name('payment.success');
-        // Route::get('/payment/cancel', [PayPalController::class, 'paymentCancel'])->name('payment.cancel');
-
-        Route::get("/payment",[StripeController::class,"index"])->name("payment.index");
         Route::post("/payment/checkout/{id}",[EnrollmentController::class,"enroll"])->name("payment.checkout");
         Route::get("/payment/success/{course}",[StripeController::class,"success"])->name("payment.success");
+        Route::get("/payment/history",[StripeController::class,"history"])->name("payment.history");
                 
     });
     

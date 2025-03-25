@@ -85,4 +85,25 @@ class StripeController extends Controller
         }
     }
 
+    public function history()
+    {
+        try {
+            $user = Auth::user();
+            $payments = Payment::where('user_id', $user->id)
+                ->with('course') 
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'message' => 'Historique des paiements récupéré avec succès',
+                'payments' => $payments
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 }
