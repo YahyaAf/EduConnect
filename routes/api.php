@@ -91,6 +91,8 @@ Route::prefix('v1')->group(function () {
         Route::post("/payment/checkout/{id}",[EnrollmentController::class,"enroll"])->name("payment.checkout");
         Route::get("/payment/success/{course}",[StripeController::class,"success"])->name("payment.success");
         Route::get("/payment/history",[StripeController::class,"history"])->name("payment.history");
+        Route::get('/payment/status/{id}', [StripeController::class, 'status']);
+
                 
     });
     

@@ -105,5 +105,31 @@ class StripeController extends Controller
         }
     }
 
+    public function status($id)
+    {
+        try {
+            $user = Auth::user();
+            $payment = Payment::where('id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+
+            if (!$payment) {
+                return response()->json([
+                    'message' => 'Paiement non trouvé ou accès non autorisé'
+                ], 404);
+            }
+
+            return response()->json([
+                'message' => 'Statut du paiement récupéré avec succès',
+                'status' => $payment->payment_status
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 
 }
