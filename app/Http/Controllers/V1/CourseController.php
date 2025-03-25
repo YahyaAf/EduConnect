@@ -20,7 +20,7 @@ class CourseController extends BaseController
     {
         $this->courseService = $courseService;
 
-        $this->middleware('can:view-course')->only(['index', 'show']);
+        // $this->middleware('can:view-course')->only(['index', 'show']);
         $this->middleware('can:create-course')->only(['store']);
         $this->middleware('can:update-course')->only(['update']);
         $this->middleware('can:delete-course')->only(['destroy']);

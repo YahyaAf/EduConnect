@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\V1;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Services\EnrollmentService;
-use Illuminate\Support\Facades\Auth;
+use Stripe\Stripe;
 use App\Models\Course;
+use App\Models\Payment;
+use Illuminate\Http\Request;
+use Stripe\Checkout\Session;
+use App\Services\EnrollmentService;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller as BaseController;
 
 class EnrollmentController extends BaseController
@@ -28,23 +31,54 @@ class EnrollmentController extends BaseController
      */
     public function enroll(Request $request, $course_id)
     {
-        $existingEnrollment = $this->enrollmentService->getEnrollmentsByCourse($course_id)->where('user_id', Auth::id())->first();
+        $userId = Auth::id();
 
-        if ($existingEnrollment) {
+        $paymentExists = Payment::where('user_id', $userId)
+            ->where('course_id', $course_id)
+            ->where('payment_status', 'payed')
+            ->exists();
+
+        if ($paymentExists) {
             return response()->json(['message' => 'Vous êtes déjà inscrit à ce cours'], 409);
         }
 
-        // Création de l'inscription
-        $enrollment = $this->enrollmentService->enrollUser([
-            'user_id' => Auth::id(),
-            'course_id' => $course_id,
-            'status' => 'pending',
+        Stripe::setApiKey(env('STRIPE_TEST_SK'));
+
+        $course = Course::findOrFail($course_id);
+        
+        $session = Session::create([
+            'line_items'  => [
+                [
+                    'price_data' => [
+                        'currency'     => 'mad',
+                        'product_data' => [
+                            'name' => $course->name,
+                        ],
+                        'unit_amount'  => $course->price * 100,
+                    ],
+                    'quantity'   => 1,
+                ],
+            ],
+            'mode'        => 'payment',
+            'success_url' => route('payment.success', $course_id),
+            'cancel_url'  => route('payment.checkout', $course_id),
         ]);
 
+        Payment::create([
+            'user_id' => $userId,
+            'course_id' => $course_id,
+            'amount' => $course->price,
+            'payment_status' => "pending",
+            'transaction_id' => $session->id,
+            'payment_method'=>"stripe"
+        ]);
+
+        session()->put('Session_token_payment', $session->id);
+
         return response()->json([
-            'message' => 'Inscription réussie, en attente de validation',
-            'enrollment' => $enrollment
-        ], 201);
+            'message' => 'Redirection vers Stripe pour le paiement',
+            'payment_url' => $session->url
+        ]);
     }
 
     /**

@@ -8,6 +8,8 @@ use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\VideoController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\MentorController;
+use App\Http\Controllers\V1\PayPalController;
+use App\Http\Controllers\V1\StripeController;
 use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\StudentController;
 use App\Http\Controllers\V1\CategoryController;
@@ -86,7 +88,15 @@ Route::prefix('v1')->group(function () {
         Route::post('videos/{id}', [VideoController::class, 'update']);        
         Route::delete('videos/{id}', [VideoController::class, 'destroy']);
 
-        
+        // Route::get('/payment/create/{course_id}', [PayPalController::class, 'createPayment'])->name('payment.create');
+        // Route::get('/payment/success/{course_id}', [PayPalController::class, 'paymentSuccess'])->name('payment.success');
+        // Route::get('/payment/cancel', [PayPalController::class, 'paymentCancel'])->name('payment.cancel');
+
+        Route::get("/payment",[StripeController::class,"index"])->name("payment.index");
+        Route::post("/payment/checkout/{id}",[EnrollmentController::class,"enroll"])->name("payment.checkout");
+        Route::get("/payment/success/{course}",[StripeController::class,"success"])->name("payment.success");
+                
     });
+    
 });
 
