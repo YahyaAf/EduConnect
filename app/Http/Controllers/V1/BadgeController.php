@@ -171,14 +171,20 @@ class BadgeController extends Controller
         return response()->json(['message' => 'You didn\'t get any badges.']);
     }
 
+    public function getUserBadges(Request $request)
+    {
+        $user = Auth::user();
 
+        $badges = $user->badges;
 
+        if ($badges->isEmpty()) {
+            return response()->json(['message' => 'You don\'t have any badges yet.']);
+        }
 
-
-
-
-
-
+        return response()->json([
+            'badges' => $badges->pluck('name'), 
+        ]);
+    }
 
 
 }
