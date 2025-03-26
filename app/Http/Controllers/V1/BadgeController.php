@@ -107,6 +107,29 @@ class BadgeController extends Controller
         return response()->json(['message' => 'You didn\'t get the badge: course-creator, top-mentor, or active-mentor']);
     }
 
+    public function checkStudentBadge(Request $request)
+    {
+        $user = Auth::user();  
+
+        if (!$user->hasRole('student')) {
+            return response()->json(['message' => 'User is not a student'], 400);
+        }
+
+        $completedCourseBadge = Badge::where('name', 'course-completed')->first(); 
+    
+        $completedCourses = $user->courses()->wherePivot('progress', 'done')->get();
+        // dd($completedCourses);
+
+        if ($completedCourses->count() > 0) {
+            $user->badges()->syncWithoutDetaching([$completedCourseBadge->id]); 
+            return response()->json(['message' => 'You have received the badge: ' . $completedCourseBadge->name]);
+        }
+        
+        return response()->json(['message' => 'You didn\'t get the badge: ' . $completedCourseBadge->name]);
+    }
+
+
+
 
 
 

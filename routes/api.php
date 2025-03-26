@@ -99,6 +99,7 @@ Route::prefix('v1')->group(function () {
         Route::put('badges/{id}', [BadgeController::class, 'update']);
         Route::delete('badges/{id}', [BadgeController::class, 'destroy']);
         Route::post('/mentor-badge-check', [BadgeController::class, 'checkMentorBadge']);
+        Route::post('/student-badge-check', [BadgeController::class, 'checkStudentBadge']);
 
                 
     });
