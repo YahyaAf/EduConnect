@@ -78,8 +78,10 @@ class BadgeController extends Controller
 
         $courseCount = $user->createdCourses()->count();
         $studentCount = $user->createdCourses()->withCount('enrollments')->get()->sum('enrollments_count');
+
         $courseCreatorBadge = Badge::where('name', 'course-creator')->first();
         $topMentorBadge = Badge::where('name', 'top-mentor')->first();
+        $activeMentorBadge = Badge::where('name', 'active-mentor')->first();
 
         $assignedBadges = [];
 
@@ -91,13 +93,20 @@ class BadgeController extends Controller
             $assignedBadges[] = $topMentorBadge->id; 
         }
 
-        if (!empty($assignedBadges)) {
-            $user->badges()->syncWithoutDetaching($assignedBadges); 
-            return response()->json(['message' => 'You have received the badge(s): ' . implode(', ', Badge::find($assignedBadges)->pluck('name')->toArray())]);
+        if (abs(now()->diffInMonths($user->created_at)) >= $activeMentorBadge->condition_value) {
+            $assignedBadges[] = $activeMentorBadge->id;
         }
 
-        return response()->json(['message' => 'You didn\'t get the badge: course-creator or top-mentor']);
+        if (!empty($assignedBadges)) {
+            $user->badges()->syncWithoutDetaching($assignedBadges); 
+            return response()->json([
+                'message' => 'You have received the badge(s): ' . implode(', ', Badge::find($assignedBadges)->pluck('name')->toArray())
+            ]);
+        }
+
+        return response()->json(['message' => 'You didn\'t get the badge: course-creator, top-mentor, or active-mentor']);
     }
+
 
 
 
