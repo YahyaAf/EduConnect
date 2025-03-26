@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Models\User;
 use App\Models\Badge;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\BadgeRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -119,7 +120,7 @@ class BadgeController extends Controller
         $multiCourseBadge = Badge::where('name', 'course-follower')->first(); 
         $fiveCourseBadge = Badge::where('name', 'course-completer')->first(); 
         $activeStudentBadge = Badge::where('name', 'active-student')->first(); 
-        
+        $sameMentorBadge = Badge::where('name', 'mentor-follower')->first(); 
 
         $completedCourses = $user->courses()->wherePivot('progress', 'done')->get();
 
@@ -128,6 +129,15 @@ class BadgeController extends Controller
         $completedCoursesCount = $completedCourses->count();
 
         $monthsActive = abs(now()->diffInMonths($user->created_at));
+
+        $mentorCounts = DB::table('courses')
+            ->join('enrollments', 'courses.id', '=', 'enrollments.course_id')
+            ->where('enrollments.user_id', $user->id)
+            ->whereNotNull('courses.user_id') 
+            ->select('courses.user_id as mentor_id', DB::raw('COUNT(*) as course_count'))
+            ->groupBy('courses.user_id')
+            ->get();
+
 
         $assignedBadges = [];
 
@@ -147,6 +157,10 @@ class BadgeController extends Controller
             $assignedBadges[] = $activeStudentBadge->id;
         }
 
+        if ($mentorCounts->first()->course_count > $sameMentorBadge->condition_value) {
+            $assignedBadges[] = $sameMentorBadge->id;
+        }
+
         if (!empty($assignedBadges)) {
             $user->badges()->syncWithoutDetaching($assignedBadges);
             return response()->json([
@@ -156,6 +170,7 @@ class BadgeController extends Controller
 
         return response()->json(['message' => 'You didn\'t get any badges.']);
     }
+
 
 
 
