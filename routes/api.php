@@ -10,6 +10,7 @@ use App\Http\Controllers\V1\VideoController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\MentorController;
 use App\Http\Controllers\V1\PayPalController;
+use App\Http\Controllers\V1\SearchController;
 use App\Http\Controllers\V1\StripeController;
 use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\StudentController;
@@ -101,6 +102,9 @@ Route::prefix('v1')->group(function () {
         Route::post('/mentor-badge-check', [BadgeController::class, 'checkMentorBadge']);
         Route::post('/student-badge-check', [BadgeController::class, 'checkStudentBadge']);
         Route::get('/user/badges', [BadgeController::class, 'getUserBadges']);
+
+
+        Route::get('/coursess/search', [SearchController::class, 'searchCourses']);
 
                 
     });
