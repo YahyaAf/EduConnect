@@ -105,6 +105,8 @@ Route::prefix('v1')->group(function () {
 
 
         Route::get('/coursess/search', [SearchController::class, 'searchCourses']);
+        Route::get('/coursess', [SearchController::class, 'filterCourses']);
+
 
                 
     });

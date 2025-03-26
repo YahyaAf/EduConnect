@@ -16,29 +16,39 @@ class SearchController extends Controller
      */
     public function searchCourses(Request $request)
     {
-        // Get the search query from the request
         $query = $request->input('search');
-
-        // Validate that the query exists
         if (!$query) {
             return response()->json(['message' => 'Search query is required'], 400);
         }
-
-        // Search for courses by title or description
         $courses = Course::where('name', 'like', '%' . $query . '%')
                         ->orWhere('description', 'like', '%' . $query . '%')
                         ->get();
 
-        // Check if any courses were found
         if ($courses->isEmpty()) {
             return response()->json(['message' => 'No courses found matching your search criteria.'], 404);
         }
-
-        // Return the search results as a JSON response
         return response()->json([
             'courses' => $courses
         ]);
     }
+
+    public function filterCourses(Request $request)
+    {
+        $query = Course::query();
+
+        if ($request->has('category') && $request->category) {
+            $query->where('category_id', $request->category);
+        }
+
+        if ($request->has('difficulty_level') && $request->difficulty) {
+            $query->where('difficulty_level', $request->difficulty);
+        }
+
+        $courses = $query->get();
+
+        return response()->json($courses);
+    }
+
 
 }
 
