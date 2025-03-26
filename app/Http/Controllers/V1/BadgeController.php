@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Models\User;
 use App\Models\Badge;
 use Illuminate\Http\Request;
 use App\Http\Requests\BadgeRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UpdateBadgeRequest;
 
 class BadgeController extends Controller
@@ -65,4 +67,26 @@ class BadgeController extends Controller
             'message' => 'Badge deleted successfully!',
         ]);
     }
+
+    public function checkMentorBadge(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user->hasRole('mentor')) {
+            return response()->json(['message' => 'User is not a mentor'], 400);
+        }
+
+        $courseCount = $user->createdCourses()->count();
+        
+
+        $badge = Badge::where('name', 'course-creator')->first();
+        if ($courseCount >= $badge->condition_value) {
+            $user->badges()->syncWithoutDetaching([$badge->id]); 
+            return response()->json(['message' => 'You have received the badge: ' . $badge->name]);
+        }
+
+        return response()->json(['message' => 'You didn\'t get the badge: ' . $badge->name]);
+    }
+
+
 }

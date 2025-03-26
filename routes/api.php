@@ -98,6 +98,7 @@ Route::prefix('v1')->group(function () {
         Route::post('badges', [BadgeController::class, 'store']);
         Route::put('badges/{id}', [BadgeController::class, 'update']);
         Route::delete('badges/{id}', [BadgeController::class, 'destroy']);
+        Route::post('/mentor-badge-check', [BadgeController::class, 'checkMentorBadge']);
 
                 
     });
