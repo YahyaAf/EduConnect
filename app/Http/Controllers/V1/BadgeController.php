@@ -118,6 +118,7 @@ class BadgeController extends Controller
         $completedCourseBadge = Badge::where('name', 'course-completed')->first(); 
         $multiCourseBadge = Badge::where('name', 'course-follower')->first(); 
         $fiveCourseBadge = Badge::where('name', 'course-completer')->first(); 
+        $activeStudentBadge = Badge::where('name', 'active-student')->first(); 
         
 
         $completedCourses = $user->courses()->wherePivot('progress', 'done')->get();
@@ -125,6 +126,8 @@ class BadgeController extends Controller
         $uniqueCoursesCount = $user->courses()->distinct()->count();
 
         $completedCoursesCount = $completedCourses->count();
+
+        $monthsActive = abs(now()->diffInMonths($user->created_at));
 
         $assignedBadges = [];
 
@@ -140,6 +143,10 @@ class BadgeController extends Controller
             $assignedBadges[] = $fiveCourseBadge->id;
         }
 
+        if ($monthsActive >= $activeStudentBadge->condition_value) {
+            $assignedBadges[] = $activeStudentBadge->id;
+        }
+
         if (!empty($assignedBadges)) {
             $user->badges()->syncWithoutDetaching($assignedBadges);
             return response()->json([
@@ -149,6 +156,7 @@ class BadgeController extends Controller
 
         return response()->json(['message' => 'You didn\'t get any badges.']);
     }
+
 
 
 
