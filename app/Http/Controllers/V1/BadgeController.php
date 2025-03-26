@@ -110,25 +110,34 @@ class BadgeController extends Controller
     public function checkStudentBadge(Request $request)
     {
         $user = Auth::user();  
+
         if (!$user->hasRole('student')) {
             return response()->json(['message' => 'User is not a student'], 400);
         }
-        $completedCourseBadge = Badge::where('name', 'course-completed')->first(); 
 
+        $completedCourseBadge = Badge::where('name', 'course-completed')->first(); 
         $multiCourseBadge = Badge::where('name', 'course-follower')->first(); 
+        $fiveCourseBadge = Badge::where('name', 'course-completer')->first(); 
+        
 
         $completedCourses = $user->courses()->wherePivot('progress', 'done')->get();
 
         $uniqueCoursesCount = $user->courses()->distinct()->count();
 
+        $completedCoursesCount = $completedCourses->count();
+
         $assignedBadges = [];
 
-        if ($completedCourses->count() > 0) {
+        if ($completedCoursesCount > 0) {
             $assignedBadges[] = $completedCourseBadge->id;
         }
 
         if ($uniqueCoursesCount >= $multiCourseBadge->condition_value) {
             $assignedBadges[] = $multiCourseBadge->id;
+        }
+
+        if ($completedCoursesCount >= $fiveCourseBadge->condition_value) {
+            $assignedBadges[] = $fiveCourseBadge->id;
         }
 
         if (!empty($assignedBadges)) {
@@ -138,8 +147,9 @@ class BadgeController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'You didn\'t get the badge(s): course-completed or multi-course-student']);
+        return response()->json(['message' => 'You didn\'t get any badges.']);
     }
+
 
 
 
