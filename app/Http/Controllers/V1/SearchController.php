@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class SearchController extends Controller
 {
-    /**
-     * Search courses by title or description.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function searchCourses(Request $request)
     {
         $query = $request->input('search');
@@ -48,6 +43,22 @@ class SearchController extends Controller
 
         return response()->json($courses);
     }
+
+    public function searchMentors(Request $request)
+    {
+        $request->validate([
+            'search' => 'required|string|max:255',
+        ]);
+
+        $searchQuery = $request->input('search');
+
+        $mentors = User::role('mentor')
+                        ->where('name', 'like', '%' . $searchQuery . '%')
+                        ->get();
+
+        return response()->json($mentors);
+    }
+
 
 
 }
