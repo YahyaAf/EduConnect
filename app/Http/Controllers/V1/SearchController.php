@@ -59,6 +59,22 @@ class SearchController extends Controller
         return response()->json($mentors);
     }
 
+    public function filterStudentsByBadge(Request $request)
+    {
+        $request->validate([
+            'badges' => 'required|exists:badges,id',
+        ]);
+
+        $badgeId = $request->input('badges');
+
+        $students = User::whereHas('badges', function ($query) use ($badgeId) {
+            $query->where('badges.id', $badgeId);
+        })->get();
+        
+        return response()->json($students);
+    }
+
+
 
 
 }

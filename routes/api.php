@@ -107,6 +107,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/coursess/search', [SearchController::class, 'searchCourses']);
         Route::get('/coursess', [SearchController::class, 'filterCourses']);
         Route::get('/mentors', [SearchController::class, 'searchMentors']);
+        Route::get('/students', [SearchController::class, 'filterStudentsByBadge']);
+
+
 
 
 
