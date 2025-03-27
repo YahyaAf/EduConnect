@@ -67,9 +67,11 @@ class SearchController extends Controller
 
         $badgeId = $request->input('badges');
 
-        $students = User::whereHas('badges', function ($query) use ($badgeId) {
-            $query->where('badges.id', $badgeId);
-        })->get();
+        $students = User::role('student')
+                        ->whereHas('badges', function($query) use ($badgeId) {
+                            $query->where('badges.id', $badgeId);
+                        })
+                        ->get();
         
         return response()->json($students);
     }
